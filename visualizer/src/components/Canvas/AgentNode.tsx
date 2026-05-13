@@ -12,7 +12,7 @@ import {
   Users,
 } from 'lucide-react';
 
-const iconMap: Record<string, React.ComponentType<{ size?: number; className?: string }>> = {
+const iconMap: Record<string, React.ComponentType<{ size?: number; className?: string; style?: React.CSSProperties }>> = {
   Crown,
   Lightbulb,
   Wrench,

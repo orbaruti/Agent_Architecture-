@@ -3,7 +3,7 @@ import {
   ArrowRight,
   RotateCw,
   Send,
-  CheckCircle2,
+
   Eye,
   AlertTriangle,
   ThumbsUp,
