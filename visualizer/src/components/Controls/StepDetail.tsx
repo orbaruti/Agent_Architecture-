@@ -3,7 +3,6 @@ import {
   ArrowRight,
   RotateCw,
   Send,
-
   Eye,
   AlertTriangle,
   ThumbsUp,
@@ -26,10 +25,66 @@ const typeConfig: Record<StepType, { icon: React.ComponentType<{ size?: number; 
 
 interface StepDetailProps {
   playback: PlaybackState;
+  compact?: boolean;
 }
 
-export default function StepDetail({ playback }: StepDetailProps) {
+export default function StepDetail({ playback, compact }: StepDetailProps) {
   const { currentStep, stepIndex, workflow, totalSteps } = playback;
+
+  if (compact) {
+    return (
+      <div className="bg-surface-light px-4 py-3">
+        <AnimatePresence mode="wait">
+          {currentStep && (
+            <motion.div
+              key={`${workflow.id}-${stepIndex}`}
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.15 }}
+              className="space-y-3"
+            >
+              <div className="flex items-center gap-3 flex-wrap">
+                <StepTypeBadge type={currentStep.type} />
+                <div className="flex items-center gap-1.5">
+                  <AgentBadge agentId={currentStep.from} />
+                  {currentStep.from !== currentStep.to && (
+                    <>
+                      <ArrowRight size={10} className="text-text-muted" />
+                      <AgentBadge agentId={currentStep.to} />
+                    </>
+                  )}
+                  {currentStep.from === currentStep.to && (
+                    <span className="text-[10px] text-text-muted italic">(self)</span>
+                  )}
+                </div>
+              </div>
+
+              <p className="text-xs text-text-secondary leading-relaxed">
+                {currentStep.description}
+              </p>
+
+              <div className="flex gap-0.5">
+                {workflow.steps.map((_, i) => (
+                  <div
+                    key={i}
+                    className="h-1 rounded-full flex-1 min-w-[3px] transition-all duration-300"
+                    style={{
+                      background: i === stepIndex
+                        ? '#3b82f6'
+                        : i < stepIndex
+                          ? '#3b82f640'
+                          : 'rgba(42, 42, 62, 0.6)',
+                    }}
+                  />
+                ))}
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
+      </div>
+    );
+  }
 
   return (
     <div className="h-full flex flex-col border-l border-border bg-surface-light overflow-hidden">
@@ -62,11 +117,11 @@ export default function StepDetail({ playback }: StepDetailProps) {
                   Participants
                 </div>
                 <div className="flex items-center gap-2 flex-wrap">
-                  <AgentBadge agentId={currentStep.from} role="from" />
+                  <AgentBadge agentId={currentStep.from} label="sender" />
                   {currentStep.from !== currentStep.to && (
                     <>
                       <ArrowRight size={12} className="text-text-muted shrink-0" />
-                      <AgentBadge agentId={currentStep.to} role="to" />
+                      <AgentBadge agentId={currentStep.to} label="receiver" />
                     </>
                   )}
                   {currentStep.from === currentStep.to && (
@@ -158,7 +213,7 @@ function StepTypeBadge({ type }: { type: StepType }) {
   );
 }
 
-function AgentBadge({ agentId, role }: { agentId: string; role: 'from' | 'to' }) {
+function AgentBadge({ agentId, label }: { agentId: string; label?: string }) {
   const agent = agentMap[agentId];
   if (!agent) return null;
 
@@ -174,9 +229,9 @@ function AgentBadge({ agentId, role }: { agentId: string; role: 'from' | 'to' })
       >
         {agent.role}
       </span>
-      <span className="text-[9px] text-text-muted">
-        {role === 'from' ? 'sender' : 'receiver'}
-      </span>
+      {label && (
+        <span className="text-[9px] text-text-muted">{label}</span>
+      )}
     </div>
   );
 }

@@ -1,4 +1,5 @@
-import { motion } from 'framer-motion';
+import { useState } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 import {
   Play,
   Pause,
@@ -6,6 +7,7 @@ import {
   SkipForward,
   ChevronsLeft,
   ChevronsRight,
+  Gauge,
 } from 'lucide-react';
 import type { PlaybackState, PlaybackControls as Controls, PlaybackSpeed } from '../../hooks/usePlayback';
 
@@ -14,11 +16,93 @@ const speeds: PlaybackSpeed[] = [0.5, 1, 2, 3];
 interface PlaybackControlsProps {
   playback: PlaybackState;
   controls: Controls;
+  mobile?: boolean;
 }
 
-export default function PlaybackControls({ playback, controls }: PlaybackControlsProps) {
+export default function PlaybackControls({ playback, controls, mobile }: PlaybackControlsProps) {
   const { isPlaying, stepIndex, totalSteps, speed, workflow } = playback;
   const hasStarted = stepIndex >= 0;
+  const [showSpeed, setShowSpeed] = useState(false);
+
+  if (mobile) {
+    return (
+      <div className="flex items-center gap-2 h-full px-3 relative">
+        <div className="flex items-center gap-1">
+          <MobileControlButton onClick={controls.prev} disabled={!hasStarted || stepIndex === 0}>
+            <SkipBack size={16} />
+          </MobileControlButton>
+
+          <motion.button
+            onClick={controls.togglePlay}
+            className="flex items-center justify-center w-11 h-11 rounded-full bg-accent-blue/20 border border-accent-blue/40 text-accent-blue active:bg-accent-blue/30 transition-colors cursor-pointer"
+            whileTap={{ scale: 0.9 }}
+          >
+            {isPlaying ? <Pause size={16} /> : <Play size={16} className="ml-0.5" />}
+          </motion.button>
+
+          <MobileControlButton onClick={controls.next} disabled={stepIndex >= totalSteps - 1}>
+            <SkipForward size={16} />
+          </MobileControlButton>
+        </div>
+
+        <div className="flex-1 flex flex-col gap-0.5 min-w-0">
+          <div
+            className="h-2 bg-surface-lighter rounded-full cursor-pointer relative"
+            onClick={(e) => {
+              const rect = e.currentTarget.getBoundingClientRect();
+              const pct = (e.clientX - rect.left) / rect.width;
+              const idx = Math.round(pct * (totalSteps - 1));
+              controls.seekTo(idx);
+            }}
+          >
+            <motion.div
+              className="h-full rounded-full bg-accent-blue/60"
+              animate={{ width: `${hasStarted ? ((stepIndex + 1) / totalSteps) * 100 : 0}%` }}
+              transition={{ duration: 0.3, ease: 'easeOut' }}
+            />
+          </div>
+          <div className="text-[10px] text-text-muted truncate">
+            {workflow.name}
+            {hasStarted && playback.currentStep ? ` — ${playback.currentStep.action}` : ''}
+          </div>
+        </div>
+
+        <div className="relative">
+          <button
+            onClick={() => setShowSpeed(!showSpeed)}
+            className="flex items-center justify-center w-9 h-9 rounded-lg text-text-secondary active:bg-surface-lighter cursor-pointer"
+          >
+            <Gauge size={14} />
+          </button>
+
+          <AnimatePresence>
+            {showSpeed && (
+              <motion.div
+                initial={{ opacity: 0, y: 4 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: 4 }}
+                className="absolute bottom-full right-0 mb-2 flex gap-1 p-1.5 rounded-lg bg-surface-light border border-border shadow-xl"
+              >
+                {speeds.map((s) => (
+                  <button
+                    key={s}
+                    onClick={() => { controls.setSpeed(s); setShowSpeed(false); }}
+                    className={`px-2.5 py-1.5 rounded-md text-[11px] font-mono transition-colors cursor-pointer ${
+                      speed === s
+                        ? 'bg-accent-blue/20 text-accent-blue border border-accent-blue/30'
+                        : 'text-text-muted active:text-text-secondary border border-transparent'
+                    }`}
+                  >
+                    {s}x
+                  </button>
+                ))}
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="flex items-center gap-4 h-full px-5">
@@ -118,6 +202,31 @@ function ControlButton({
       }`}
       whileHover={disabled ? {} : { scale: 1.1 }}
       whileTap={disabled ? {} : { scale: 0.9 }}
+    >
+      {children}
+    </motion.button>
+  );
+}
+
+function MobileControlButton({
+  children,
+  onClick,
+  disabled,
+}: {
+  children: React.ReactNode;
+  onClick: () => void;
+  disabled?: boolean;
+}) {
+  return (
+    <motion.button
+      onClick={onClick}
+      disabled={disabled}
+      className={`flex items-center justify-center w-10 h-10 rounded-lg transition-colors cursor-pointer ${
+        disabled
+          ? 'text-text-muted/30 cursor-not-allowed'
+          : 'text-text-secondary active:text-text-primary active:bg-surface-lighter'
+      }`}
+      whileTap={disabled ? {} : { scale: 0.85 }}
     >
       {children}
     </motion.button>
