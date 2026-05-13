@@ -10,6 +10,8 @@ import {
   Monitor,
   Rocket,
   Users,
+  Settings,
+  UserCog,
 } from 'lucide-react';
 
 const iconMap: Record<string, React.ComponentType<{ size?: number; className?: string; style?: React.CSSProperties }>> = {
@@ -20,6 +22,8 @@ const iconMap: Record<string, React.ComponentType<{ size?: number; className?: s
   Monitor,
   Rocket,
   Users,
+  Settings,
+  UserCog,
 };
 
 export type AgentNodeStatus = 'idle' | 'sender' | 'receiver' | 'dimmed' | 'self';
