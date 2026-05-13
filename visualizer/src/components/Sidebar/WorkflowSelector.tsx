@@ -9,6 +9,8 @@ import {
   UserPlus,
   ClipboardCheck,
   SearchCheck,
+  GitPullRequest,
+  ListChecks,
 } from 'lucide-react';
 import { workflows } from '../../data/workflows';
 import type { PlaybackState, PlaybackControls } from '../../hooks/usePlayback';
@@ -23,6 +25,8 @@ const iconMap: Record<string, React.ComponentType<{ size?: number; className?: s
   UserPlus,
   ClipboardCheck,
   SearchCheck,
+  GitPullRequest,
+  ListChecks,
 };
 
 interface WorkflowSelectorProps {

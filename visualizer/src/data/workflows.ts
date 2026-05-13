@@ -220,6 +220,37 @@ export const workflows: Workflow[] = [
       { id: 12, from: 'cto', to: 'ceo', action: 'Summary update', description: 'CTO updates CEO if the issue had release or quality impact.', type: 'report' },
     ],
   },
+  {
+    id: 'code-review',
+    name: 'Code Review',
+    description: 'Formalized code review process: engineer submits, Lead reviews, rework if needed, then merge. Applies to both backend and frontend.',
+    icon: 'GitPullRequest',
+    steps: [
+      { id: 1, from: 'backend', to: 'backend-lead', action: 'Submits code for review', description: 'Backend Engineer submits completed code to Backend Lead for review. Same pattern applies to Frontend Engineer and Frontend Lead.', type: 'respond' },
+      { id: 2, from: 'backend-lead', to: 'backend-lead', action: 'Reviews code', description: 'Backend Lead reviews code for quality, test coverage, and performance.', type: 'review' },
+      { id: 3, from: 'backend-lead', to: 'backend', action: 'Requests changes', description: 'Backend Lead sends feedback with specific issues to the engineer for adaptation.', type: 'delegate' },
+      { id: 4, from: 'backend', to: 'backend', action: 'Adapts code', description: 'Backend Engineer adapts code based on review feedback.', type: 'execute' },
+      { id: 5, from: 'backend', to: 'backend-lead', action: 'Resubmits code', description: 'Backend Engineer resubmits adapted code for re-review.', type: 'respond' },
+      { id: 6, from: 'backend-lead', to: 'backend-lead', action: 'Approves and merges', description: 'Backend Lead approves the code and merges it.', type: 'approve' },
+      { id: 7, from: 'backend-lead', to: 'cto', action: 'Reports completion', description: 'Backend Lead reports that the code has been reviewed, approved, and merged.', type: 'report' },
+    ],
+  },
+  {
+    id: 'test-plan-review',
+    name: 'Test Plan Review',
+    description: 'Formalized test plan review: QA Lead creates plan from requirements, CPO reviews product correctness, CTO reviews technical coverage.',
+    icon: 'ListChecks',
+    steps: [
+      { id: 1, from: 'qa-lead', to: 'qa-lead', action: 'Creates test plan', description: 'QA Lead creates the test plan based on CPO product requirements, user stories, acceptance criteria, and user flows.', type: 'execute' },
+      { id: 2, from: 'qa-lead', to: 'cpo', action: 'Submits for product review', description: 'QA Lead submits the test plan to CPO to confirm it fully covers product requirements and expected user behavior.', type: 'delegate' },
+      { id: 3, from: 'cpo', to: 'cpo', action: 'Reviews product correctness', description: 'CPO reviews the test plan against product requirements, user stories, and expected user flows.', type: 'review' },
+      { id: 4, from: 'cpo', to: 'qa-lead', action: 'Approves product correctness', description: 'CPO confirms the test plan matches the product requirements and expected behavior.', type: 'approve' },
+      { id: 5, from: 'qa-lead', to: 'cto', action: 'Submits for technical review', description: 'QA Lead submits the test plan to CTO for technical coverage review.', type: 'delegate' },
+      { id: 6, from: 'cto', to: 'cto', action: 'Reviews technical coverage', description: 'CTO reviews the test plan for regression areas, environment needs, and implementation risks.', type: 'review' },
+      { id: 7, from: 'cto', to: 'qa-lead', action: 'Approves technical coverage', description: 'CTO confirms the test plan includes adequate technical coverage.', type: 'approve' },
+      { id: 8, from: 'qa-lead', to: 'qa-lead', action: 'Finalizes test plan', description: 'QA Lead finalizes the test plan as approved for execution.', type: 'execute' },
+    ],
+  },
 ];
 
 export const workflowMap = Object.fromEntries(workflows.map((w) => [w.id, w]));
