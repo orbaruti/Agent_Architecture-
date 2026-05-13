@@ -246,11 +246,15 @@ Use this flow for meaningful new features:
 5. CPO aligns with CTO on technical feasibility.
 6. CTO defines technical approach, risks, dependencies, and implementation breakdown.
 7. CEO approves the plan or requests Board approval if needed.
-8. CTO creates engineering tasks.
-9. Backend, Frontend, and DevOps agents execute their parts.
-10. CTO reviews the integrated result.
-11. CEO receives final summary.
-12. Board/user receives final update.
+8. CPO hands off requirements to QA Test Planner. QA Test Planner creates the test plan based on CPO's requirements.
+9. CPO approves the test plan for product correctness. CTO approves the test plan for technical coverage.
+10. CTO creates engineering tasks.
+11. Backend, Frontend, and DevOps agents execute their parts.
+12. CTO reviews the integrated result.
+13. QA Engineer executes the approved test plan and reports results to CTO.
+14. CTO decides release readiness based on QA results. CPO is consulted if product behavior is unclear.
+15. CEO receives final summary.
+16. Board/user receives final update.
 
 ---
 
