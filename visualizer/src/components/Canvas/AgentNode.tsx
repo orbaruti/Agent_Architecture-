@@ -12,6 +12,7 @@ import {
   Users,
   Settings,
   UserCog,
+  ShieldCheck,
 } from 'lucide-react';
 
 const iconMap: Record<string, React.ComponentType<{ size?: number; className?: string; style?: React.CSSProperties }>> = {
@@ -24,6 +25,7 @@ const iconMap: Record<string, React.ComponentType<{ size?: number; className?: s
   Users,
   Settings,
   UserCog,
+  ShieldCheck,
 };
 
 export type AgentNodeStatus = 'idle' | 'sender' | 'receiver' | 'dimmed' | 'self';

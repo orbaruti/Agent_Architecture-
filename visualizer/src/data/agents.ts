@@ -118,7 +118,7 @@ export const agents: Agent[] = [
       'Business logic',
       'Backend testing',
     ],
-    position: { x: 0, y: 490 },
+    position: { x: -80, y: 490 },
   },
   {
     id: 'frontend',
@@ -133,7 +133,22 @@ export const agents: Agent[] = [
       'Responsive behavior',
       'Accessibility',
     ],
-    position: { x: 230, y: 490 },
+    position: { x: 140, y: 490 },
+  },
+  {
+    id: 'qa',
+    role: 'QA Engineer',
+    title: 'Quality & Validation',
+    icon: 'ShieldCheck',
+    color: '#ef4444',
+    responsibilities: [
+      'Test plans',
+      'Regression testing',
+      'Bug verification',
+      'Release quality gates',
+      'Test automation',
+    ],
+    position: { x: 360, y: 490 },
   },
   {
     id: 'devops',
@@ -148,7 +163,7 @@ export const agents: Agent[] = [
       'Monitoring & logging',
       'Release reliability',
     ],
-    position: { x: 460, y: 490 },
+    position: { x: 560, y: 490 },
   },
 ];
 
