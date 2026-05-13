@@ -924,21 +924,227 @@ HR checks:
 
 Consider these agents only when the workflow is recurring.
 
+### QA Function
+
+The QA function should be split into two dedicated QA roles when product delivery becomes recurring:
+
+1. QA Test Planner
+2. QA Engineer
+
+This separation prevents the same agent from both designing the quality strategy and executing it without review.
+
+---
+
+### QA Test Planner
+
+Hire when every feature needs a structured test plan before implementation or release validation.
+
+Reports to:
+
+* CPO
+
+Works closely with:
+
+* CPO
+* CTO
+* Backend Engineer
+* Frontend Engineer
+* DevOps Engineer
+* QA Engineer
+
+Owns:
+
+* Feature test plan creation based on product requirements
+* Test scope definition derived from user stories and acceptance criteria
+* Requirements-based test scenario design
+* Risk-based test coverage
+* Edge case definition
+* Regression impact analysis
+* Test readiness checklist
+
+The QA Test Planner creates a test plan for each meaningful feature. The test plan must be derived from the CPO's product requirements, user stories, acceptance criteria, and user flows. The test plan validates whether the product meets the requirements, not whether the code runs correctly.
+
+The QA Test Planner should not use the CTO's implementation details or code structure as the primary input for the test plan. Technical context from CTO is used only to add coverage for implementation risks, regression areas, environment needs, and data requirements.
+
+The test plan must be reviewed by:
+
+* CPO, to confirm the test plan fully covers the product requirements and expected user behavior
+* CTO, to confirm the test plan includes technical coverage for implementation risks, regression areas, and environment needs
+
+The QA Test Planner should not execute the test plan as the main owner. Execution belongs to the QA Engineer.
+
+#### QA Test Plan Standard
+
+Each feature test plan should include:
+
+##### Feature Name
+
+What feature is being tested?
+
+##### Product Context
+
+What user problem or product flow does this feature support?
+
+##### Scope
+
+What is included in testing?
+
+##### Out of Scope
+
+What will not be tested in this cycle?
+
+##### Requirements Source
+
+Which CPO-defined user stories, acceptance criteria, user flows, and product requirements were used as the primary input for this test plan? The test plan must trace back to these requirements.
+
+##### Test Scenarios
+
+What scenarios should be tested?
+
+##### Edge Cases
+
+What unusual, negative, or boundary cases should be tested?
+
+##### Regression Areas
+
+What existing flows may be affected?
+
+##### Data Requirements
+
+What test data is needed?
+
+##### Environment Requirements
+
+Which environment is needed for execution?
+
+##### Dependencies
+
+Which agents, systems, or decisions are required before testing can start?
+
+##### Severity Guidance
+
+How should issues be classified by severity?
+
+##### Entry Criteria
+
+What must be ready before testing starts?
+
+##### Exit Criteria
+
+What must be true before QA can approve the feature?
+
+##### Review Status
+
+CPO review status and CTO review status.
+
+---
+
 ### QA Engineer
 
-Hire when quality, regression testing, bug verification, or release validation becomes recurring.
+Hire when approved test plans need recurring execution, bug validation, regression testing, and quality reporting.
 
 Reports to:
 
 * CTO
 
+Works closely with:
+
+* QA Test Planner
+* CTO
+* Backend Engineer
+* Frontend Engineer
+* DevOps Engineer
+* CPO when product behavior is unclear
+
 Owns:
 
-* Test plans
+* Test plan execution
+* Manual testing
+* Automated testing where relevant
 * Regression testing
+* Bug reproduction
 * Bug verification
-* Release quality gates
-* Test automation
+* Test result reporting
+* Severity classification
+* Release quality feedback
+
+The QA Engineer receives the approved test plan from the QA Test Planner and executes it.
+
+The QA Engineer provides test results to the CTO, including clear severity classification for every failed test or discovered issue.
+
+The QA Engineer should not redefine product requirements. If expected behavior is unclear, the QA Engineer escalates to CPO through CTO or according to the workflow.
+
+#### QA Test Result Standard
+
+Each QA execution report should include:
+
+##### Feature Name
+
+What feature was tested?
+
+##### Test Plan Reference
+
+Which approved test plan was executed?
+
+##### Environment
+
+Where was testing performed?
+
+##### Build / Version
+
+Which build or version was tested?
+
+##### Execution Summary
+
+High-level summary of passed, failed, blocked, and not-run tests.
+
+##### Test Results
+
+For each scenario:
+
+* Scenario name
+* Status: Passed, Failed, Blocked, or Not Run
+* Actual result
+* Expected result
+* Evidence if available
+* Related bug/task if opened
+
+##### Issues Found
+
+For each issue:
+
+* Title
+* Description
+* Steps to reproduce
+* Expected result
+* Actual result
+* Severity
+* Impact
+* Suggested owner: Backend, Frontend, DevOps, Product, or Unknown
+
+##### Severity Classification
+
+Use the following severity model:
+
+* Critical: Blocks core functionality, causes data loss, security risk, or prevents release
+* High: Major feature broken, no reasonable workaround, significant user impact
+* Medium: Important issue with workaround or limited user impact
+* Low: Minor defect, visual issue, wording issue, or low-risk edge case
+
+##### QA Recommendation
+
+One of:
+
+* Approve for release
+* Approve with known issues
+* Block release
+* Retest required
+* Product clarification required
+* Technical investigation required
+
+##### Final Recipient
+
+QA results must be sent to CTO. CTO decides engineering follow-up and release readiness. CPO should be included when product behavior, user flow, or acceptance criteria are unclear.
 
 ---
 
@@ -1012,6 +1218,78 @@ Owns:
 * Technical standards
 * Refactoring proposals
 * Technical debt tracking
+
+---
+
+## QA Workflow
+
+Use this workflow for every meaningful feature that requires validation before release.
+
+1. CPO defines product requirements, user stories, acceptance criteria, and user flows.
+2. CPO hands off the requirements to the QA Test Planner as the primary input for the test plan.
+3. QA Test Planner creates the feature test plan based on the CPO's requirements, not on code or implementation details.
+4. CTO provides technical context: implementation risks, regression areas, environment needs, and data requirements.
+5. QA Test Planner incorporates CTO's technical context as additional coverage, without replacing the requirements-driven scope.
+6. CPO reviews the test plan to confirm it fully covers the product requirements and expected user behavior.
+7. CTO reviews the test plan to confirm technical coverage and feasibility.
+8. QA Test Planner updates the test plan based on review feedback.
+9. CPO approves the test plan for product correctness.
+10. CTO approves the test plan for technical coverage.
+11. QA Engineer executes the approved test plan.
+12. QA Engineer records test results and classifies issues by severity.
+13. QA Engineer sends the QA report to CTO.
+14. CTO routes issues to Backend, Frontend, DevOps, or CPO as needed.
+15. CTO decides whether the feature is ready, blocked, or requires fixes.
+16. CPO is consulted if the test result reveals product ambiguity or unmet requirements.
+17. CEO is updated if release timing, business impact, or priority changes are affected.
+
+### QA Ownership Rules
+
+* CPO owns the product requirements that serve as the primary input for the test plan.
+* QA Test Planner owns the test plan and derives it from CPO's requirements.
+* QA Test Planner reports to CPO.
+* CPO reviews and approves product correctness of the test plan.
+* CTO reviews and approves technical coverage of the test plan.
+* QA Engineer owns execution of the approved test plan.
+* QA Engineer owns test results and severity classification.
+* CTO owns final technical release-readiness decision.
+* CPO owns clarification of expected product behavior.
+* CEO owns escalation if QA results impact company priorities, release timing, or customer commitments.
+
+### QA Handoff: Test Planner to QA Engineer
+
+Every test plan handoff from QA Test Planner to QA Engineer must include:
+
+* Feature name
+* Requirements source: which CPO-defined requirements the test plan is based on
+* Approved test plan
+* CPO approval confirmation (product correctness)
+* CTO approval confirmation (technical coverage)
+* Test scope
+* Environment
+* Required test data
+* Entry criteria
+* Exit criteria
+* Severity guidance
+* Known risks
+* Next action
+
+### QA Handoff: QA Engineer to CTO
+
+Every QA result handoff from QA Engineer to CTO must include:
+
+* Feature name
+* Tested build/version
+* Execution summary
+* Passed tests
+* Failed tests
+* Blocked tests
+* Issues found
+* Severity per issue
+* Suggested technical owner per issue
+* Release recommendation
+* Product questions, if any
+* Retest needs, if any
 
 ---
 
