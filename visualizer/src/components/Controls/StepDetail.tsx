@@ -8,10 +8,12 @@ import {
   ThumbsUp,
   FileText,
   PlayCircle,
+  Zap,
 } from 'lucide-react';
 import type { PlaybackState } from '../../hooks/usePlayback';
 import { agentMap } from '../../data/agents';
 import type { StepType } from '../../data/workflows';
+import { skillMap } from '../../data/skills';
 
 const typeConfig: Record<StepType, { icon: React.ComponentType<{ size?: number; className?: string }>; label: string; color: string }> = {
   delegate: { icon: Send, label: 'Delegates', color: '#3b82f6' },
@@ -147,6 +149,45 @@ export default function StepDetail({ playback, compact }: StepDetailProps) {
                   {currentStep.description}
                 </p>
               </div>
+
+              {currentStep.skills && currentStep.skills.length > 0 && (
+                <div className="space-y-1.5">
+                  <div className="text-[10px] text-text-muted uppercase tracking-wider">
+                    Skills
+                  </div>
+                  <div className="flex flex-wrap gap-1.5">
+                    {currentStep.skills.map((skillId) => {
+                      const skill = skillMap[skillId];
+                      if (!skill) return null;
+                      const fromAgent = agentMap[currentStep.from];
+                      const badgeColor = fromAgent?.color ?? '#3b82f6';
+                      return (
+                        <div
+                          key={skillId}
+                          className="group relative"
+                        >
+                          <span
+                            className="inline-flex items-center gap-1 px-2 py-1 rounded-md text-[10px] font-medium cursor-default"
+                            style={{
+                              background: `${badgeColor}12`,
+                              border: `1px solid ${badgeColor}25`,
+                              color: badgeColor,
+                            }}
+                          >
+                            <Zap size={9} />
+                            {skill.name}
+                          </span>
+                          <div className="absolute bottom-full left-0 mb-1 hidden group-hover:block z-50 pointer-events-none">
+                            <div className="px-2.5 py-1.5 rounded-md text-[10px] text-text-secondary bg-surface border border-border shadow-lg max-w-[200px] whitespace-normal">
+                              {skill.description}
+                            </div>
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+              )}
             </motion.div>
           ) : (
             <motion.div

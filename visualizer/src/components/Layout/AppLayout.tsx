@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useCallback } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
 import { ChevronUp, ChevronDown } from 'lucide-react';
 import WorkflowCanvas from '../Canvas/WorkflowCanvas';
@@ -6,6 +6,7 @@ import WorkflowSelector from '../Sidebar/WorkflowSelector';
 import MobileWorkflowPicker from '../Sidebar/MobileWorkflowPicker';
 import PlaybackControls from '../Controls/PlaybackControls';
 import StepDetail from '../Controls/StepDetail';
+import AgentDetail from '../Controls/AgentDetail';
 import type { PlaybackState, PlaybackControls as Controls } from '../../hooks/usePlayback';
 
 interface AppLayoutProps {
@@ -15,6 +16,17 @@ interface AppLayoutProps {
 
 export default function AppLayout({ playback, controls }: AppLayoutProps) {
   const [mobileDetailOpen, setMobileDetailOpen] = useState(false);
+
+  const handleAgentClick = useCallback(
+    (agentId: string) => {
+      controls.selectAgent(playback.selectedAgentId === agentId ? null : agentId);
+    },
+    [controls, playback.selectedAgentId],
+  );
+
+  const handleAgentClose = useCallback(() => {
+    controls.selectAgent(null);
+  }, [controls]);
 
   return (
     <>
@@ -27,7 +39,7 @@ export default function AppLayout({ playback, controls }: AppLayoutProps) {
 
           <div className="flex-1 min-w-0 flex flex-col">
             <div className="flex-1 min-h-0 relative">
-              <WorkflowCanvas playback={playback} />
+              <WorkflowCanvas playback={playback} onAgentClick={handleAgentClick} />
               <div className="absolute top-4 left-4 right-4 pointer-events-none">
                 <div className="pointer-events-auto inline-flex items-center gap-2 px-3 py-1.5 rounded-lg bg-surface/80 border border-border backdrop-blur-md">
                   <div className="w-1.5 h-1.5 rounded-full bg-accent-blue animate-pulse" />
@@ -47,7 +59,11 @@ export default function AppLayout({ playback, controls }: AppLayoutProps) {
           </div>
 
           <div className="w-72 shrink-0">
-            <StepDetail playback={playback} />
+            {playback.selectedAgentId ? (
+              <AgentDetail agentId={playback.selectedAgentId} onClose={handleAgentClose} />
+            ) : (
+              <StepDetail playback={playback} />
+            )}
           </div>
         </div>
       </div>
@@ -57,7 +73,7 @@ export default function AppLayout({ playback, controls }: AppLayoutProps) {
         <MobileWorkflowPicker playback={playback} controls={controls} />
 
         <div className="flex-1 min-h-0 relative">
-          <WorkflowCanvas playback={playback} />
+          <WorkflowCanvas playback={playback} onAgentClick={handleAgentClick} />
         </div>
 
         <div className="shrink-0 border-t border-border bg-surface-light">
@@ -88,7 +104,20 @@ export default function AppLayout({ playback, controls }: AppLayoutProps) {
         </div>
 
         <AnimatePresence>
-          {mobileDetailOpen && playback.currentStep && (
+          {playback.selectedAgentId && (
+            <motion.div
+              initial={{ height: 0, opacity: 0 }}
+              animate={{ height: 'auto', opacity: 1 }}
+              exit={{ height: 0, opacity: 0 }}
+              transition={{ duration: 0.25, ease: 'easeOut' }}
+              className="shrink-0 overflow-hidden border-t border-border"
+            >
+              <div className="max-h-[40vh] overflow-y-auto">
+                <AgentDetail agentId={playback.selectedAgentId} onClose={handleAgentClose} />
+              </div>
+            </motion.div>
+          )}
+          {mobileDetailOpen && playback.currentStep && !playback.selectedAgentId && (
             <motion.div
               initial={{ height: 0, opacity: 0 }}
               animate={{ height: 'auto', opacity: 1 }}

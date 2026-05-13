@@ -12,6 +12,7 @@ export interface PlaybackState {
   currentStep: WorkflowStep | null;
   totalSteps: number;
   progress: number;
+  selectedAgentId: string | null;
 }
 
 export interface PlaybackControls {
@@ -25,6 +26,7 @@ export interface PlaybackControls {
   skipToEnd: () => void;
   setSpeed: (speed: PlaybackSpeed) => void;
   selectWorkflow: (workflowId: string) => void;
+  selectAgent: (agentId: string | null) => void;
 }
 
 const BASE_INTERVAL_MS = 3000;
@@ -34,6 +36,7 @@ export function usePlayback(): [PlaybackState, PlaybackControls] {
   const [stepIndex, setStepIndex] = useState(-1);
   const [isPlaying, setIsPlaying] = useState(false);
   const [speed, setSpeedState] = useState<PlaybackSpeed>(1);
+  const [selectedAgentId, setSelectedAgentId] = useState<string | null>(null);
   const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
   const workflow = workflows.find((w) => w.id === workflowId) ?? workflows[0];
@@ -78,6 +81,7 @@ export function usePlayback(): [PlaybackState, PlaybackControls] {
   }, [stepIndex, totalSteps, isPlaying]);
 
   const play = useCallback(() => {
+    setSelectedAgentId(null);
     if (stepIndex >= totalSteps - 1) {
       setStepIndex(0);
     } else if (stepIndex < 0) {
@@ -98,11 +102,13 @@ export function usePlayback(): [PlaybackState, PlaybackControls] {
 
   const next = useCallback(() => {
     setIsPlaying(false);
+    setSelectedAgentId(null);
     setStepIndex((prev) => Math.min(prev + 1, totalSteps - 1));
   }, [totalSteps]);
 
   const prev = useCallback(() => {
     setIsPlaying(false);
+    setSelectedAgentId(null);
     setStepIndex((prev) => Math.max(prev - 1, 0));
   }, []);
 
@@ -133,9 +139,14 @@ export function usePlayback(): [PlaybackState, PlaybackControls] {
       clearTimer();
       setWorkflowId(id);
       setStepIndex(-1);
+      setSelectedAgentId(null);
     },
     [clearTimer],
   );
+
+  const selectAgent = useCallback((agentId: string | null) => {
+    setSelectedAgentId(agentId);
+  }, []);
 
   const state: PlaybackState = {
     workflow,
@@ -145,6 +156,7 @@ export function usePlayback(): [PlaybackState, PlaybackControls] {
     currentStep,
     totalSteps,
     progress,
+    selectedAgentId,
   };
 
   const controls: PlaybackControls = {
@@ -158,6 +170,7 @@ export function usePlayback(): [PlaybackState, PlaybackControls] {
     skipToEnd,
     setSpeed,
     selectWorkflow,
+    selectAgent,
   };
 
   return [state, controls];

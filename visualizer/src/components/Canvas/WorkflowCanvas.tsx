@@ -1,4 +1,4 @@
-import { useMemo, useEffect, useCallback } from 'react';
+import { useMemo, useEffect, useCallback, type MouseEvent } from 'react';
 import {
   ReactFlow,
   Background,
@@ -18,6 +18,7 @@ const edgeTypes = { animated: AnimatedEdge };
 
 interface WorkflowCanvasProps {
   playback: PlaybackState;
+  onAgentClick?: (agentId: string) => void;
 }
 
 function buildEdgeId(from: string, to: string) {
@@ -40,7 +41,7 @@ function getAgentStatus(
   return 'idle';
 }
 
-export default function WorkflowCanvas({ playback }: WorkflowCanvasProps) {
+export default function WorkflowCanvas({ playback, onAgentClick }: WorkflowCanvasProps) {
   const { workflow, currentStep, stepIndex } = playback;
 
   const involvedAgents = useMemo(() => {
@@ -148,6 +149,13 @@ export default function WorkflowCanvas({ playback }: WorkflowCanvasProps) {
     updateGraph();
   }, [stepIndex, workflow.id, updateGraph]);
 
+  const handleNodeClick = useCallback(
+    (_event: MouseEvent, node: Node) => {
+      onAgentClick?.(node.id);
+    },
+    [onAgentClick],
+  );
+
   return (
     <div className="w-full h-full">
       <ReactFlow
@@ -155,6 +163,7 @@ export default function WorkflowCanvas({ playback }: WorkflowCanvasProps) {
         edges={edges}
         onNodesChange={onNodesChange}
         onEdgesChange={onEdgesChange}
+        onNodeClick={handleNodeClick}
         nodeTypes={nodeTypes}
         edgeTypes={edgeTypes}
         fitView
@@ -166,7 +175,7 @@ export default function WorkflowCanvas({ playback }: WorkflowCanvasProps) {
         preventScrolling
         nodesDraggable={false}
         nodesConnectable={false}
-        elementsSelectable={false}
+        elementsSelectable
         proOptions={{ hideAttribution: true }}
       >
         <Background variant={BackgroundVariant.Dots} gap={24} size={1} color="#1a1a2e" />
