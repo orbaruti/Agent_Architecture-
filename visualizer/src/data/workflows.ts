@@ -183,6 +183,26 @@ export const workflows: Workflow[] = [
       { id: 8, from: 'ceo', to: 'ceo', action: 'Decides on actions', description: 'CEO reviews the performance report and decides on prompt improvements, hiring, or process changes.', type: 'approve' },
     ],
   },
+  {
+    id: 'qa-automation-review',
+    name: 'QA Automation Review',
+    description: 'QA investigates CI/CD failures, consults CPO and CTO to classify as real bug or automation issue, then resolves.',
+    icon: 'SearchCheck',
+    steps: [
+      { id: 1, from: 'devops', to: 'qa', action: 'CI/CD results received', description: 'DevOps delivers failing automation/test results from the CI/CD pipeline to QA for investigation.', type: 'delegate' },
+      { id: 2, from: 'qa', to: 'qa', action: 'Investigates failures', description: 'QA analyzes the failing tests, gathers evidence, and prepares an initial classification (real bug vs automation issue).', type: 'execute' },
+      { id: 3, from: 'qa', to: 'cpo', action: 'Requests product advisement', description: 'QA consults CPO to understand whether the failing behavior matches expected product requirements or is a spec gap.', type: 'delegate' },
+      { id: 4, from: 'cpo', to: 'qa', action: 'Product advisement', description: 'CPO responds with product context: whether the behavior is expected, a real product bug, or a misalignment in test expectations.', type: 'respond' },
+      { id: 5, from: 'qa', to: 'cto', action: 'Requests technical advisement', description: 'QA consults CTO with the combined evidence and CPO input to get a technical classification.', type: 'delegate' },
+      { id: 6, from: 'cto', to: 'cto', action: 'Classifies failure', description: 'CTO determines whether this is a real code bug or an automation/test issue based on technical analysis.', type: 'execute' },
+      { id: 7, from: 'cto', to: 'qa', action: 'Classification response', description: 'CTO responds with the final classification: real bug or automation issue.', type: 'respond' },
+      { id: 8, from: 'qa', to: 'qa', action: 'Decides action', description: 'QA decides next steps based on classification. If real bug: create bug report. If automation issue: fix test automation.', type: 'execute' },
+      { id: 9, from: 'qa', to: 'cto', action: 'Creates bug report', description: 'QA files a bug report and assigns it to CTO for triage and routing to the appropriate engineer.', type: 'report' },
+      { id: 10, from: 'qa', to: 'devops', action: 'Fixes automation', description: 'QA coordinates with DevOps to fix the failing test automation or CI/CD configuration.', type: 'delegate' },
+      { id: 11, from: 'qa', to: 'cto', action: 'Resolution report', description: 'QA reports the resolution (bug filed or automation fixed) back to CTO.', type: 'report' },
+      { id: 12, from: 'cto', to: 'ceo', action: 'Summary update', description: 'CTO updates CEO if the issue had release or quality impact.', type: 'report' },
+    ],
+  },
 ];
 
 export const workflowMap = Object.fromEntries(workflows.map((w) => [w.id, w]));

@@ -7,12 +7,13 @@ import {
   Megaphone,
   UserPlus,
   ClipboardCheck,
+  SearchCheck,
 } from 'lucide-react';
 import { workflows } from '../../data/workflows';
 import type { PlaybackState, PlaybackControls } from '../../hooks/usePlayback';
 
 const iconMap: Record<string, React.ComponentType<{ size?: number; className?: string }>> = {
-  Sparkles, Bug, Map, Cloud, MessageCircle, Megaphone, UserPlus, ClipboardCheck,
+  Sparkles, Bug, Map, Cloud, MessageCircle, Megaphone, UserPlus, ClipboardCheck, SearchCheck,
 };
 
 interface MobileWorkflowPickerProps {
